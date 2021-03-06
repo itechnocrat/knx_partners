@@ -58,6 +58,7 @@ python manage.py runserver # запустит встроенный в Python в�
 Переключиться на ветку `master` или `develop` / `feature` и начать погружение, вооружившись документацией:   
 [Django documentation](https://docs.djangoproject.com/en/3.1/)  
 [MDN Web Docs, moz://a: Веб-фреймворк Django (Python)](https://developer.mozilla.org/ru/docs/Learn/Server-side/Django)  
+
 __Всегда внимательно следи за текущей веткой!!!__
 
 ### Основа реализации
