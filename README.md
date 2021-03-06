@@ -56,10 +56,8 @@ python manage.py runserver # запустит встроенный в Python в�
 Следует закрыть терминал MS VS Code, отсоединиться от контейнера.  
 ### Начало разработки
 Переключиться на ветку `master` или `develop` / `feature` и начать погружение, вооружившись документацией:   
-[Writing your first Django app, part 1](https://docs.djangoproject.com/en/3.1/intro/tutorial01/)  
-[MDN. Django введение](https://developer.mozilla.org/ru/docs/Learn/Server-side/Django/Introduction)  
-[Django Software Foundation](https://www.djangoproject.com/)  
-
+[Django documentation](https://docs.djangoproject.com/en/3.1/)  
+[MDN Web Docs, moz://a: Веб-фреймворк Django (Python)](https://developer.mozilla.org/ru/docs/Learn/Server-side/Django)  
 __Всегда внимательно следи за текущей веткой!!!__
 
 ### Основа реализации
