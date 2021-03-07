@@ -15,7 +15,16 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-
+# Добавлено по мануалу:
+from django.urls import include
+"""
+Список функций - ассоциаций URL с контроллерами/с другими такими же списками.
+Модуль admin.site.urls имеет свой такой список.
+"""
 urlpatterns = [
     path('admin/', admin.site.urls),
+]
+# Добавлено по мануалу:
+urlpatterns += [
+    path('catalog/', include('catalog.urls')),
 ]
