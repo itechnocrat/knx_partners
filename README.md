@@ -1,6 +1,13 @@
 ## Изучение Django
-[Учебник Django: Веб-сайт местной библиотеки](https://developer.mozilla.org/ru/docs/Learn/Server-side/Django/Tutorial_local_library_website)  
-[Руководство по Django часть 2: создание скелета](https://developer.mozilla.org/ru/docs/Learn/Server-side/Django/skeleton_website)  
+[Django documentation](https://docs.djangoproject.com/en/3.1/)  
+[Getting started](https://docs.djangoproject.com/en/3.1/intro/)  
+### Poll application
+consist of two parts:  
+1.
+A public site that lets people view polls and vote in them.  
+2.
+An admin site that lets you add, change, and delete polls.  
+
 ```sh
 django-admin startproject locallibrary .
 cd locallibrary
