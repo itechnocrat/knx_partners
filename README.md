@@ -1,12 +1,6 @@
 ## Изучение Django
 [Django documentation](https://docs.djangoproject.com/en/3.1/)  
 [Getting started](https://docs.djangoproject.com/en/3.1/intro/)  
-### Poll application
-consist of two parts:  
-1.
-A public site that lets people view polls and vote in them.  
-2.
-An admin site that lets you add, change, and delete polls.  
 ### Запуск окружения разработки
 В к.л. директорию сделать клон этого репозитория:  
 ```sh
@@ -39,6 +33,15 @@ Launch VS Code Quick Open `Ctrl+P`, paste `ext install ms-vscode-remote.remote-c
 MS VS Code перезапустится и начнется сборка контейнера.  
 Дождаться окончания процесса.  
 Запустить терминал MS VS Code, в терминале должно быть красивое приглашение командной строки.  
+### Writing your first Django app
+### Poll application
+consist of two parts:  
+1.
+A public site that lets people view polls and vote in them.  
+2.
+An admin site that lets you add, change, and delete polls. 
+### [Part 1](https://docs.djangoproject.com/en/3.1/intro/tutorial01/)  
+### Creating a project
 ```sh
 python -m django --version # Пнуть Django
 django-admin startproject capsule . # генерация минимальной структуры приложения
@@ -144,8 +147,124 @@ python manage.py runserver
 3. Аргументы параметров `POST`/`GET`, но это не точно.  
 4. Имя для URL.  
 
----
+### [Part 2](https://docs.djangoproject.com/en/3.1/intro/tutorial02/)  
+#### Database setup
+Посмотрим файл всех настроек Django:  
+```py
+# capsule/settings.py
 
+TIME_ZONE = 'Europe/Moscow'
+# предустановленные Django приложения
+INSTALLED_APPS = [
+    'django.contrib.admin', # The admin site. You’ll use it shortly.
+    'django.contrib.auth', # An authentication system.
+    'django.contrib.contenttypes', # A framework for content types.
+    'django.contrib.sessions', # A session framework.
+    'django.contrib.messages', # A messaging framework.
+    'django.contrib.staticfiles', # A framework for managing static files.
+]
+```
+Подготовить БД (встроенная поддержка):  
+```sh
+python manage.py migrate
+```
+Команда создает БД и таблицы в ней в соответствии с настройками из файла `polls/settings.py`  
+### Creating models
+Модель в понимании термина MVT - Model, View, Template.  
+Модель, это ...
+
+Приложение будет содержать две модели:  
+Question and Choice (вопрос и выбор).  
+У модели Question есть вопрос и дата публикации. 
+У модели Choice есть два поля: текст выбора и подсчет голосов, выбор связан с вопросом.  
+Модели описываются классами Pyhton.  
+Edit the polls/models.py file so it looks like this:  
+```py
+# polls/models.py
+from django.db import models
+
+
+class Question(models.Model):
+    question_text = models.CharField(max_length=200)
+    pub_date = models.DateTimeField('date published')
+
+
+class Choice(models.Model):
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    choice_text = models.CharField(max_length=200)
+    votes = models.IntegerField(default=0)
+```
+Каждый класс является подклассом `django.db.models.Model`.  
+Each model has a number of class variables, each of which represents a database field in the model.  
+Каждая модель имеет ряд переменных класса, каждая из которых представляет поле базы данных в модели.  
+... ToDo сформулировать точности
+
+### Activating models
+Небольшое кол-во кода дает Django много информации для создания схемы базы данных приложениия и создания API для доступа к объектам Question and Choice.  
+
+Нужно сообщить проекту, что приложение Poll существует.  
+(Приложения Dj устанавливаемые, их можно исп-ть во множестве проектов.)  
+Для регистрации приложения необходимо добавить его класс конфигурации `PollsConfig` из файла `polls/apps.py` в `INSTALLED_APPS` файла `mysite/settings.py`:  
+```py
+# capsule/settings.py
+
+INSTALLED_APPS = [
+    'polls.apps.PollsConfig',
+    # ...
+]
+```
+Теперь Dj знает о приложении и как его подключить.  
+Необходимо сообщить Dj об изменениях в моделях данных, они будут сохранены в миграциях, это файлы в `polls/migrations/*_initial.py`  
+```sh
+python manage.py makemigrations polls
+```
+Миграции можно посмотреть в виде SQL запросов:  
+```sh
+python manage.py sqlmigrate polls 0001
+```
+Теперь необходимо создать модель таблиц в реальной БД:  
+```sh
+python manage.py migrate
+```
+Итого, как вносятся изменения в модель данных:  
+Изменяется `polls/models.py` и  
+```sh
+python manage.py makemigrations
+python manage.py migrate
+```
+### [Playing with the API](https://docs.djangoproject.com/en/3.1/intro/tutorial02/#playing-with-the-api)
+```sh
+python manage.py shell
+quit()
+```
+
+### Creating an admin user
+First we’ll need to create a user who can login to the admin site. Run the following command:  
+```sh
+python manage.py createsuperuser
+# Username: technocrat
+# Email address:
+# Password: technocrat
+python manage.py runserver
+```
+[http://localhost:8000/admin/](http://localhost:8000/admin/)  
+Залогиниться под админом.  
+### Make the poll app modifiable in the admin
+```py
+# polls/admin.py¶
+
+from django.contrib import admin
+
+from .models import Question
+
+admin.site.register(Question)
+```
+Обновить страницу в браузере, изменения станут сразу же заметны.  
+Таблица Question стала доступной для редактирования в административной части сайта.  
+### [Explore the free admin functionality](https://docs.djangoproject.com/en/3.1/intro/tutorial02/#explore-the-free-admin-functionality)  
+
+---
+Старое  
 Будет создан:  
 каталог `catalog` с содержимым:  
 `migrations` хранит "миграции" — файлы, которые позволяют автоматически обновлять базу данных по мере изменения моделей, 
