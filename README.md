@@ -263,6 +263,46 @@ admin.site.register(Question)
 Таблица Question стала доступной для редактирования в административной части сайта.  
 ### [Explore the free admin functionality](https://docs.djangoproject.com/en/3.1/intro/tutorial02/#explore-the-free-admin-functionality)  
 
+### [Part 3](https://docs.djangoproject.com/en/3.1/intro/tutorial03/)  
+### Writing more views
+Добавим представление, которое будет способно принимать аргументы: 
+```py
+# polls/views.py¶
+
+def detail(request, question_id):
+    return HttpResponse("You're looking at question %s." % question_id)
+
+def results(request, question_id):
+    response = "You're looking at the results of question %s."
+    return HttpResponse(response % question_id)
+
+def vote(request, question_id):
+    return HttpResponse("You're voting on question %s." % question_id)
+```
+Теперь необходимо подключить новое представление к приложению/модулю polls:  
+```py
+# polls/urls.py¶
+
+from django.urls import path
+
+from . import views
+
+urlpatterns = [
+    # ex: /polls/
+    path('', views.index, name='index'),
+    # ex: /polls/5/
+    path('<int:question_id>/', views.detail, name='detail'),
+    # ex: /polls/5/results/
+    path('<int:question_id>/results/', views.results, name='results'),
+    # ex: /polls/5/vote/
+    path('<int:question_id>/vote/', views.vote, name='vote'),
+]
+```
+При поступлении запроса `http://localhost:8000/polls/34/`, Dj загружает модуль `capsule/urls`, т.к. он указан в переменной `ROOT_URLCONF` файла `capsule/settings.py`, просматривает по порядку список из переменной `urlpatterns` в `capsule/urls`, находит совпадение `polls/`, вызывает `polls.urls`, которому передается `34/`, что совпадает с шаблоном `<int:question_id>/`, из-за чего вызывается `detail()` из файла `polls/views.py`.  
+Угловые скобки «захватывают» часть URL-адреса и передают ее как аргумент ключевого слова в представление, `detail()` получает аргументы `request=<HttpRequest object>` и `question_id=34`  
+`question_id`, это имя, которое будет использоваться для идентификации совпадающего шаблона.  
+### Write views that actually do something
+https://docs.djangoproject.com/en/3.1/intro/tutorial03/#write-views-that-actually-do-something
 
 ---
 Старое  
