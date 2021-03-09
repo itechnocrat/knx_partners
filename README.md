@@ -200,11 +200,11 @@ Each model has a number of class variables, each of which represents a database 
 ... ToDo сформулировать точности
 
 ### Activating models
-Небольшое кол-во кода дает Django много информации для создания схемы базы данных приложениия и создания API для доступа к объектам Question and Choice.  
+Небольшое кол-во кода дает Django много информации для создания схемы базы данных приложения и создания API для доступа к объектам Question and Choice.  
 
 Нужно сообщить проекту, что приложение Poll существует.  
 (Приложения Dj устанавливаемые, их можно исп-ть во множестве проектов.)  
-Для регистрации приложения необходимо добавить его класс конфигурации `PollsConfig` из файла `polls/apps.py` в `INSTALLED_APPS` файла `mysite/settings.py`:  
+Для регистрации приложения необходимо добавить его класс конфигурации `PollsConfig` из файла `polls/apps.py` в `INSTALLED_APPS` файл `capsule/settings.py`:  
 ```py
 # capsule/settings.py
 
@@ -247,8 +247,8 @@ python manage.py createsuperuser
 # Password: technocrat
 python manage.py runserver
 ```
-[http://localhost:8000/admin/](http://localhost:8000/admin/)  
-Залогиниться под админом.  
+Перейти по адресу [http://localhost:8000/admin/](http://localhost:8000/admin/) и
+залогиниться под админом.  
 ### Make the poll app modifiable in the admin
 ```py
 # polls/admin.py¶
@@ -262,6 +262,7 @@ admin.site.register(Question)
 Обновить страницу в браузере, изменения станут сразу же заметны.  
 Таблица Question стала доступной для редактирования в административной части сайта.  
 ### [Explore the free admin functionality](https://docs.djangoproject.com/en/3.1/intro/tutorial02/#explore-the-free-admin-functionality)  
+
 
 ---
 Старое  
