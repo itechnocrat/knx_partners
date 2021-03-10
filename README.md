@@ -175,7 +175,7 @@ python manage.py migrate
 
 Приложение будет содержать две модели:  
 Question and Choice (вопрос и выбор).  
-У модели Question есть вопрос и дата публикации. 
+У модели Question есть вопрос и дата публикации.  
 У модели Choice есть два поля: текст выбора и подсчет голосов, выбор связан с вопросом.  
 Модели описываются классами Pyhton.  
 Edit the polls/models.py file so it looks like this:  
@@ -213,7 +213,7 @@ INSTALLED_APPS = [
     # ...
 ]
 ```
-Теперь Dj знает о приложении и как его подключить.  
+Теперь Dj знает о приложении и о том, как его подключить.  
 Необходимо сообщить Dj об изменениях в моделях данных, они будут сохранены в миграциях, это файлы в `polls/migrations/*_initial.py`  
 ```sh
 python manage.py makemigrations polls
@@ -302,7 +302,87 @@ urlpatterns = [
 Угловые скобки «захватывают» часть URL-адреса и передают ее как аргумент ключевого слова в представление, `detail()` получает аргументы `request=<HttpRequest object>` и `question_id=34`  
 `question_id`, это имя, которое будет использоваться для идентификации совпадающего шаблона.  
 ### Write views that actually do something
-https://docs.djangoproject.com/en/3.1/intro/tutorial03/#write-views-that-actually-do-something
+Представления ответственны за две вещи:  
+- возвращают `HttpResponse` объект, содержащий контент  
+- возвращает [Http404](https://docs.djangoproject.com/en/3.1/topics/http/views/#django.http.Http404)  
+
+Представления читают записи из БД (собственно представляют/отображают их), используя для этого систему шаблонизирования, как в Dj - `DjangoTemplates` или другие.  
+Могут быть сгенерированы файлы: PDF, XML, ZIP на лету, все, что хотите, используя библиотеки Python.  
+```py
+# polls/views.py¶
+
+from django.http import HttpResponse
+
+from .models import Question
+
+
+def index(request):
+    latest_question_list = Question.objects.order_by('-pub_date')[:5]
+    output = ', '.join([q.question_text for q in latest_question_list])
+    return HttpResponse(output)
+
+# Leave the rest of the views (detail, results, vote) unchanged
+```
+Смысл пока не понятен.  
+Плавно подходим к системе шаблонов в Dj.  
+Система шаблонов отделяет дизайн страниц от Python.  
+Создание структуры каталогов шаблонов и шаблона `templates` для хранения шаблонов:  
+```sh
+mkdir -p polls/templates/polls
+touch polls/templates/polls/index.html
+```
+В переменной `TEMPLATES` в файле `capsule/settings.py` описывается, как Django будет загружать и обрабатывать шаблоны.  
+`DjangoTemplates` включается по умолчанию значением `true` переменной `APP_DIRS` в файле `capsule/settings.py`  
+`DjangoTemplates` всегда ищет подкаталог `templates` в каждом из `INSTALLED_APPS`.  
+Загрузчик шаблонов `app_directories` позволяет обращаться к шаблонам коротко - `polls/index.html`.  
+
+Тёмная тема про `Template namespacing` ...
+Наполним шаблон содержимым:  
+```html
+<!-- polls/templates/polls/index.html¶ -->
+{% if latest_question_list %}
+    <ul>
+    {% for question in latest_question_list %}
+        <li><a href="/polls/{{ question.id }}/">{{ question.question_text }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No polls are available.</p>
+{% endif %}
+```
+Обновим  `polls/views.py`:  
+```py
+# polls/views.py¶
+
+from django.http import HttpResponse
+from django.template import loader
+
+from .models import Question
+
+
+def index(request):
+    latest_question_list = Question.objects.order_by('-pub_date')[:5]
+    template = loader.get_template('polls/index.html')
+    context = {
+        'latest_question_list': latest_question_list,
+    }
+    return HttpResponse(template.render(context, request))
+```
+Внутри функции загружается шаблон и ему передается контекст - соответствие имен переменных в шаблоне объектам Python.  
+Полюбуемся:  
+```sh
+python manage.py runserver
+```
+Если была утрачен файл базы данных то понадобится повторить действия из Part 2:  
+```sh
+python manage.py makemigrations #?
+python manage.py migrate
+python manage.py createsuperuser
+# Username: technocrat
+# Email address:
+# Password: technocrat
+```
+Залогиниться [http://localhost:8000/admin/](http://localhost:8000/admin/) и создать вопрос, и тогда [http://127.0.0.1:8000/polls/](http://127.0.0.1:8000/polls/) отобразит маркированный список вопросов.  
 
 ---
 Старое  
