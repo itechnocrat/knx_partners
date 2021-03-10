@@ -403,7 +403,24 @@ python manage.py createsuperuser
 ```
 Залогиниться [http://localhost:8000/admin/](http://localhost:8000/admin/) и создать вопрос, и тогда [http://127.0.0.1:8000/polls/](http://127.0.0.1:8000/polls/) отобразит маркированный список вопросов.  
 
+### A shortcut: render()
+`polls/views.py` можно переписать:  
+```py
+#polls/views.py¶
+
+from django.shortcuts import render
+
+from .models import Question
+
+
+def index(request):
+    latest_question_list = Question.objects.order_by('-pub_date')[:5]
+    context = {'latest_question_list': latest_question_list}
+    return render(request, 'polls/index.html', context)
+```
+
 ---
+
 Старое  
 Будет создан:  
 каталог `catalog` с содержимым:  
