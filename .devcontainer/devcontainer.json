@@ -1,4 +1,4 @@
-// Update the VARIANT arg in docker-compose.yml to pick a Python version: 3, 3.8, 3.7, 3.6 
+// Update the VARIANT arg in docker-compose.yml to pick a Python version: 3, 3.8, 3.7, 3.6
 {
     "name": "knx.partners",
     "dockerComposeFile": "docker-compose.yml",
@@ -38,6 +38,7 @@
     "extensions": [
         "ms-python.python",
         "visualstudioexptteam.vscodeintellicode",
+        "mgesbert.python-path",
         // "mtxr.sqltools",
         // "mtxr.sqltools-driver-pg",
         "eamodio.gitlens",
@@ -59,7 +60,7 @@
         // "johnpapa.winteriscoming",
         // "gerane.Theme-Abyss",
         // "Equinusocio.vsc-material-theme"
-        
+
     ],
     // Use 'forwardPorts' to make a list of ports inside the container available locally.
     // "forwardPorts": [5000, 5432],
