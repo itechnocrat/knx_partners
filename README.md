@@ -325,8 +325,16 @@ urlpatterns = [
 - возвращают `HttpResponse` объект, содержащий контент  
 - возвращает [Http404](https://docs.djangoproject.com/en/3.1/topics/http/views/#django.http.Http404)  
 
-Представления читают записи из БД (собственно представляют/отображают их), используя для этого систему шаблонизирования, как в Dj - `DjangoTemplates` или другие.  
-Могут быть сгенерированы файлы: PDF, XML, ZIP на лету, все, что хотите, используя библиотеки Python.  
+Представления могут:  
+- читают записи из БД, а могут не читать.  
+- использовать системы шаблонизирования, как в Dj - `DjangoTemplates` или другие, а могут не использовать.  
+- генерированы файлы: PDF, XML, ZIP на лету, все, что хотите, используя библиотеки Python.  
+Dj нужны только:  
+[HttpResponse](https://docs.djangoproject.com/en/3.1/ref/request-response/#django.http.HttpResponse)  
+или  
+`exception`  
+
+Представление `index` отображает последние 5 вопросов опроса в системе:  
 ```py
 # polls/views.py¶
 
@@ -342,8 +350,10 @@ def index(request):
 
 # Leave the rest of the views (detail, results, vote) unchanged
 ```
-Смысл пока не понятен.  
-Плавно подходим к системе шаблонов в Dj.  
+Проблемы:
+- дизайн страницы жестко запрограммирован в представлении.  
+- для изменения вида страницы, приедстя переписывать этот код.  
+
 Система шаблонов отделяет дизайн страниц от Python.  
 Создание структуры каталогов шаблонов и шаблона `templates` для хранения шаблонов:  
 ```sh
@@ -355,8 +365,9 @@ touch polls/templates/polls/index.html
 `DjangoTemplates` всегда ищет подкаталог `templates` в каждом из `INSTALLED_APPS`.  
 Загрузчик шаблонов `app_directories` позволяет обращаться к шаблонам коротко - `polls/index.html`.  
 
-Тёмная тема про `Template namespacing` ...
-Наполним шаблон содержимым:  
+Тёмная тема про `Template namespacing` ...  
+Наполним шаблон содержимым.  
+Следующий код надо обернуть в теги `<html>` и `body`  
 ```html
 <!-- polls/templates/polls/index.html¶ -->
 {% if latest_question_list %}
@@ -394,7 +405,7 @@ python manage.py runserver
 ```
 Если был утрачен файл базы данных то понадобится повторить действия из Part 2:  
 ```sh
-python manage.py makemigrations #?
+# python manage.py makemigrations # похоже, что это не надо делать
 python manage.py migrate
 python manage.py createsuperuser
 # Username: technocrat
@@ -404,9 +415,10 @@ python manage.py createsuperuser
 Залогиниться [http://localhost:8000/admin/](http://localhost:8000/admin/) и создать вопрос, и тогда [http://127.0.0.1:8000/polls/](http://127.0.0.1:8000/polls/) отобразит маркированный список вопросов.  
 
 ### A shortcut: render()
+Функция загружает шаблон, заполняет контекст и возвращает объект HttpResponse с результатом визуализированного шаблона.  
 `polls/views.py` можно переписать:  
 ```py
-#polls/views.py¶
+# polls/views.py¶
 
 from django.shortcuts import render
 
@@ -418,9 +430,121 @@ def index(request):
     context = {'latest_question_list': latest_question_list}
     return render(request, 'polls/index.html', context)
 ```
-Это очень распространенная идиома для загрузки шаблона, заполнения контекста и возврата объекта HttpResponse с результатом визуализированного шаблона.  
+Импортирование `HttpResponse` становится не нужным, код становится короче.  
 Функция `render()` принимает объект запроса в качестве первого аргумента, имя шаблона в качестве второго аргумента и словарь в качестве необязательного третьего аргумента.  
-Он возвращает объект HttpResponse данного шаблона, созданный с заданным контекстом.  
+Он возвращает объект `HttpResponse` данного шаблона, созданный с заданным контекстом.  
+#### Raising a 404 error
+Создание представления вопросов для опроса:  
+```py
+# polls/views.py¶
+
+from django.http import Http404
+from django.shortcuts import render
+
+from .models import Question
+# ...
+def detail(request, question_id):
+    try:
+        question = Question.objects.get(pk=question_id)
+    except Question.DoesNotExist:
+        raise Http404("Question does not exist")
+    return render(request, 'polls/detail.html', {'question': question})
+```
+представление вызывает исключение Http404, если вопрос с запрошенным идентификатором не существует.  
+Забегая малость вперед:  
+Следующий код надо обернуть в теги `<html>` и `body`  
+```py
+# polls/templates/polls/detail.html
+
+{{ question }}
+```
+#### A shortcut: get_object_or_404()
+Dj предоставляет простой способ вызова страницы с сообщением об отсутствии страницы:  
+```py
+# polls/views.py¶
+
+from django.shortcuts import get_object_or_404, render
+
+from .models import Question
+# ...
+def detail(request, question_id):
+    question = get_object_or_404(Question, pk=question_id)
+    return render(request, 'polls/detail.html', {'question': question})
+```
+Функция `get_object_or_404()` принимает модель Django в качестве первого аргумента и произвольное количество аргументов ключевого слова, которые она передает функции `get()` менеджера модели.  
+Он вызывает Http404, если объект не существует.  
+
+Также существует функция `get_list_or_404()`, которая работает так же, как `get_object_or_404()`, за исключением использования `filter()` вместо `get()`.  
+Выдает Http404, если список пуст.  
+
+### Use the template system
+```py
+# polls/templates/polls/detail.html
+
+<h1>{{ question.question_text }}</h1>
+<ul>
+{% for choice in question.choice_set.all %}
+    <li>{{ choice.choice_text }}</li>
+{% endfor %}
+</ul>
+```
+Система шаблонов использует дот доступ к атрибутам переменных.  
+В примере с `{{question.question_text}}` сначала Django выполняет поиск в словаре по объекту `question`.  
+В противном случае он пытается выполнить поиск по атрибуту, который в данном случае работает.  
+Если поиск атрибута завершился неудачно, он попытался бы выполнить поиск по индексу списка.  
+Вызов метода происходит в цикле `{% for%}`:  
+`question.choice_set.all` интерпретируется как код Python `question.choice_set.all()`, который возвращает итерацию объектов `Choice` и подходит для использования в `{% for% }` тег.  
+
+**See the [template guide](https://docs.djangoproject.com/en/3.1/topics/templates/) for more about templates.**  
+[The Django template language](https://docs.djangoproject.com/en/3.1/ref/templates/language/)  
+[The Django template language: for Python programmers](https://docs.djangoproject.com/en/3.1/ref/templates/api/)  
+### Removing hardcoded URLs in templates
+Какая-то проблема с жесткими ссылками В `polls/index.html`  
+```html
+<li><a href="/polls/{{ question.id }}/">{{ question.question_text }}</a></li>
+```
+которую можно решить с помощью тега `{% url%}`, т.к. есть аргумент `name` в функциях `path()` в модуле `polls.urls`:  
+```html
+<li><a href="{% url 'detail' question.id %}">{{ question.question_text }}</a></li>
+```
+это работает нахождением определения URL-адреса, указанного в модуле `polls.urls`.  
+
+Опционально:  
+If you want to change the URL of the polls detail view to something else, perhaps to something like polls/specifics/12/ instead of doing it in the template (or templates) you would change it in polls/urls.py:  
+Если вы хотите изменить URL-адрес подробного представления опросов на что-то другое, возможно, на что-то вроде polls / specificics / 12 /, вместо того, чтобы делать это в шаблоне (или шаблонах), вы бы изменили его в polls / urls.py:  
+```py
+# ...
+# added the word 'specifics'
+path('specifics/<int:question_id>/', views.detail, name='detail'),
+# ...
+```
+### Namespacing URL names
+Бывает, что в проекте больше, чем одно приложение и необходимо, чтобы при работе тега `{% url%}` была однозначность.  
+Это обеспечивается механизмом пространства имен:  
+```py
+# polls/urls.py¶
+
+from django.urls import path
+
+from . import views
+
+app_name = 'polls' # вот часть этого механизма
+urlpatterns = [
+    path('', views.index, name='index'),
+    path('<int:question_id>/', views.detail, name='detail'),
+    path('<int:question_id>/results/', views.results, name='results'),
+    path('<int:question_id>/vote/', views.vote, name='vote'),
+]
+```
+Now change your `polls/index.html` template to point at the namespaced detail view:  
+```html
+<li><a href="{% url 'polls:detail' question.id %}">{{ question.question_text }}</a></li>
+```
+``  
+``  
+``  
+
+
 
 ---
 
