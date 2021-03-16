@@ -540,6 +540,135 @@ Now change your `polls/index.html` template to point at the namespaced detail vi
 ```html
 <li><a href="{% url 'polls:detail' question.id %}">{{ question.question_text }}</a></li>
 ```
+### Part 4
+Write a minimal form  
+Update our poll detail template `polls/detail.html` from the last tutorial, so that the template contains an HTML `<form>` element:
+```html
+<!-- polls/templates/polls/detail.html¶ -->
+
+<h1>{{ question.question_text }}</h1>
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<form action="{% url 'polls:vote' question.id %}" method="post">
+{% csrf_token %}
+{% for choice in question.choice_set.all %}
+    <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
+    <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
+{% endfor %}
+<input type="submit" value="Vote">
+</form>
+```
+The above template displays a radio button for each question choice.  
+В приведенном выше шаблоне для каждого варианта вопроса отображается `radio button`.  
+The value of each radio button is the associated question choice’s ID.  
+Значение каждого radio button - это идентификатор соответствующего варианта ответа на вопрос.  
+The name of each radio button is "choice".  
+Имя каждой radio button - «выбор».  
+That means, when somebody selects one of the radio buttons and submits the form, it’ll send the POST data choice=# where # is the ID of the selected choice.  
+Это означает, что когда кто-то выбирает один из radio button и отправляет форму, он отправляет данные POST choice = идентификатор выбранного варианта.  
+
+We set the form’s action to {% url 'polls:vote' question.id %}, and we set method="post".  
+Мы устанавливаем действие формы на `{% url 'polls: vote' question.id%}`, а также устанавливаем `method = 'post'`.  
+Using method="post" (as opposed to method="get") is very important, because the act of submitting this form will alter data server-side.  
+Использование method = 'post' (в отличие от method = 'get') очень важно, потому что отправка этой формы изменит данные на стороне сервера.  
+Whenever you create a form that alters data server-side, use method="post".  
+Каждый раз, когда вы создаете форму, которая изменяет данные на стороне сервера, используйте method = 'post'.  
+This tip isn’t specific to Django; it’s good Web development practice in general.  
+Этот совет не относится к Django; Это хорошая практика веб-разработки в целом.  
+
+`forloop.counter` счетчик циклов  
+
+Since we’re creating a POST form (which can have the effect of modifying data), we need to worry about Cross Site Request Forgeries.  
+Поскольку мы создаем форму POST (которая может влиять на изменение данных), нам нужно беспокоиться о Cross Site Request Forgeries.  
+Thankfully, you don’t have to worry too hard, because Django comes with a helpful system for protecting against it.  
+К счастью, вам не нужно слишком сильно беспокоиться, потому что Django поставляется с полезной системой для защиты от этого.  
+In short, all POST forms that are targeted at internal URLs should use the {% csrf_token %} template tag.  
+Короче говоря, все формы POST, нацеленные на внутренние URL-адреса, должны использовать тег шаблона `{% csrf_token%}`.  
+
+Создадим представление Django, которое обрабатывает отправленные данные и что-то с ними делает.  
+У нас есть:  
+```py
+path('<int:question_id>/vote/', views.vote, name='vote')
+```
+Так же есть заглушка вместо реализации функции `vote()` в `polls/viwes.py`, которую пора переписать:  
+```py
+# polls/views.py¶
+
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import get_object_or_404, render
+from django.urls import reverse
+
+from .models import Choice, Question
+# ...
+def vote(request, question_id):
+    question = get_object_or_404(Question, pk=question_id)
+    try:
+        selected_choice = question.choice_set.get(pk=request.POST['choice'])
+    except (KeyError, Choice.DoesNotExist):
+        # Redisplay the question voting form.
+        return render(request, 'polls/detail.html', {
+            'question': question,
+            'error_message': "You didn't select a choice.",
+        })
+    else:
+        selected_choice.votes += 1
+        selected_choice.save()
+        # Always return an HttpResponseRedirect after successfully dealing
+        # with POST data. This prevents data from being posted twice if a
+        # user hits the Back button.
+        return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
+```
+`request.POST` - это объект, подобный словарю, который позволяет получать доступ к переданным данным по имени ключа.  
+Здесь `request.POST['choice']` возвращает ID выбранного варианта в виде строки, `request.POST` всегда являются строками.  
+`request.POST['choice']` вызовет `KeyError`, если в `POST` нет значения.  
+Приведенный выше код проверяет `KeyError` и повторно отображает форму вопроса с сообщением об ошибке, если выбор не сделан.  
+С увеличением счетчика выбора, код возвращает `HttpResponseRedirect`, а не обычный `HttpResponse`.  
+`HttpResponseRedirect` принимает единственный аргумент: URL-адрес, на который будет перенаправлен пользователь.  
+Как гласит комментарий в коде, всегда следует возвращать `HttpResponseRedirect` после успешной обработки данных POST.  
+Это хорошая практика веб-разработки в целом.  
+Используя `URLconf`, `reverse()` вернет `/polls/3/results/`.  
+Где 3 - значение `question.id`.  
+Этот перенаправленный URL-адрес затем вызовет представление «результатов» для отображения последней страницы.  
+`request` is an `HttpRequest` object.  
+[request and response documentation](https://docs.djangoproject.com/en/3.1/ref/request-response/)  
+After somebody votes in a question, the vote() view redirects to the results page for the question:  
+```py
+# polls/views.py¶
+
+from django.shortcuts import get_object_or_404, render
+
+
+def results(request, question_id):
+    question = get_object_or_404(Question, pk=question_id)
+    return render(request, 'polls/results.html', {'question': question})
+```
+This is almost exactly the same as the `detail()` view from Tutorial 3.  
+The only difference is the template name.  
+Now, create a `polls/results.html` template:  
+```py
+# polls/templates/polls/results.html¶
+
+<h1>{{ question.question_text }}</h1>
+
+<ul>
+{% for choice in question.choice_set.all %}
+    <li>{{ choice.choice_text }} -- {{ choice.votes }} vote{{ choice.votes|pluralize }}</li>
+{% endfor %}
+</ul>
+
+<a href="{% url 'polls:detail' question.id %}">Vote again?</a>
+```
+Now, go to /polls/1/ in your browser and vote in the question.  
+You should see a results page that gets updated each time you vote.  
+If you submit the form without having chosen a choice, you should see the error message.  
+
+Проблема:  
+Если два пользователя вашего веб-сайта попытаются проголосовать в одно и то же время, это может пойти не так: для голосов будет получено одно и то же значение, скажем 42.  
+Затем для обоих пользователей вычисляется и сохраняется новое значение 43, но 44 будет ожидаемым значением.  
+Это называется состоянием гонки.  
+If you are interested, you can read [Avoiding race conditions using F()](https://docs.djangoproject.com/en/3.1/ref/models/expressions/#avoiding-race-conditions-using-f)  
+### Use generic views: Less code is better
 ``  
 ``  
 ``  
