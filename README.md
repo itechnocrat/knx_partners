@@ -669,6 +669,87 @@ If you submit the form without having chosen a choice, you should see the error 
 Это называется состоянием гонки.  
 If you are interested, you can read [Avoiding race conditions using F()](https://docs.djangoproject.com/en/3.1/ref/models/expressions/#avoiding-race-conditions-using-f)  
 ### Use generic views: Less code is better
+Django предоставляет ярлык, называемый системой `generic views`.  
+`generic views` абстрагируют общие шаблоны до такой степени, что вам даже не нужно писать код Python для написания приложения.  
+Преобразуем приложение.  
+Сделаем:  
+Преобразование URLconf.  
+Удалим некоторые из старых ненужных представлений.  
+Ознакомимься с новыми представлениями, основанными на общих представлениях Django.  
+
+__Руководство намеренно до сих пор было сфокусировано на написании представлений «жестким путем», чтобы сосредоточиться на основных концепциях.__  
+
+### Amend URLconf
+```py
+# polls/urls.py¶
+
+from django.urls import path
+
+from . import views
+
+app_name = 'polls'
+urlpatterns = [
+    path('', views.IndexView.as_view(), name='index'),
+    path('<int:pk>/', views.DetailView.as_view(), name='detail'),
+    path('<int:pk>/results/', views.ResultsView.as_view(), name='results'),
+    path('<int:question_id>/vote/', views.vote, name='vote'),
+]
+```
+`uestion_id` заменили на `pk`  
+### Amend views
+Заменим старые `index` `detail` `results` на `generic views`  
+```py
+# polls/views.py¶
+
+from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404, render
+from django.urls import reverse
+from django.views import generic
+
+from .models import Choice, Question
+
+
+class IndexView(generic.ListView):
+    template_name = 'polls/index.html'
+    context_object_name = 'latest_question_list'
+
+    def get_queryset(self):
+        """Return the last five published questions."""
+        return Question.objects.order_by('-pub_date')[:5]
+
+
+class DetailView(generic.DetailView):
+    model = Question
+    template_name = 'polls/detail.html'
+
+
+class ResultsView(generic.DetailView):
+    model = Question
+    template_name = 'polls/results.html'
+
+
+def vote(request, question_id):
+    ... # same as above, no changes needed.
+```
+
+Здесь мы используем два `generic views`: `ListView` и `DetailView`.  
+Эти два представления абстрагируются от понятий «отображать список объектов» и «отображать страницу сведений для определенного типа объекта».  
+Каждое `generic views` должно знать, по какой модели оно будет действовать.  
+Это обеспечивается с помощью атрибута модели.  
+`generic views` - `DetailView` ожидает, что значение первичного ключа, полученное из URL, будет называться `pk`, поэтому мы изменили `question_id` на `pk` для `generic views`.  
+По умолчанию `generic views` - `DetailView` использует шаблон с именем `<app name>/<model name>_detail.html`.  
+В нашем случае он будет использовать шаблон `polls/question_detail.html`.  
+Атрибут `template_name` используется для указания Django использовать конкретное имя шаблона вместо автоматически сгенерированного имени шаблона по умолчанию.  
+Мы также указываем `template_name` для `results` list view - это гарантирует, что представление результатов и подробное представление будут иметь другой вид при рендеринге, даже если они оба являются `DetailView` за кулисами.  
+Точно так же `generic views` - `ListView` использует шаблон по умолчанию с именем `<app name>/<model name>_list.html`; Мы используем `template_name`, чтобы указать `ListView` использовать наш существующий шаблон `polls/index.html`.  
+В предыдущих частях руководства к шаблонам был предоставлен контекст, содержащий контекстные переменные `question` и `latest_question_list`.  
+Для `DetailView` переменная `question` предоставляется автоматически - поскольку мы используем `Django model (Question)`, Django может определить подходящее имя для переменной контекста.  
+Однако для `ListView` автоматически сгенерированной контекстной переменной является `question_list`.  
+Чтобы переопределить это, мы предоставляем атрибут `context_object_name`, указывая, что вместо этого мы хотим использовать `latest_question_list`.  
+В качестве альтернативного подхода вы можете изменить свои шаблоны, чтобы они соответствовали новым переменным контекста по умолчанию, но гораздо проще указать Django переменную, которую мы хотим использовать.  
+Запустите сервер и используйте новое приложение для опроса на основе `generic views`.  
+Для получения полной информации о `generic views` см. [generic views documentation](https://docs.djangoproject.com/en/3.1/topics/class-based-views/).  
+
 ``  
 ``  
 ``  
