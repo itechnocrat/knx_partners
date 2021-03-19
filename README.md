@@ -63,19 +63,9 @@ python -c "import django; print(django.get_version())"
 [Django documentation](https://docs.djangoproject.com/en/3.1/)  
 [MDN Web Docs, moz://a: Веб-фреймворк Django (Python)](https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django)  
 
-__Всегда внимательно следи за текущей веткой!!!__
 
-### Основа идеи
+### Основано на
 
-[Django Tutorial in Visual Studio Code](https://code.visualstudio.com/docs/python/tutorial-django)  
-Из [репозитория](https://github.com/microsoft/python-sample-vscode-django-tutorial) взято:  
-`python-sample-vscode-django-tutorial/.vscode/launch.json` и подредактирован.  
-`python-sample-vscode-django-tutorial/hello/`  
-`python-sample-vscode-django-tutorial/python-sample-vscode-django-tutorial/manage.py`  
-`python-sample-vscode-django-tutorial/requirements.txt` и подредактирован.  
-`python-sample-vscode-django-tutorial/uwsgi.ini`  
-`python-sample-vscode-django-tutorial/web_project/`  
-и  
 [VS Code Remote / GitHub Codespaces Container Definitions](https://github.com/microsoft/vscode-dev-containers)  
 Использована готовая конфигурация -  
 `vscode-dev-containers/containers/python-3-postgres`  
