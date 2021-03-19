@@ -47,7 +47,7 @@ Launch VS Code Quick Open `Ctrl+P`, paste `ext install ms-vscode-remote.remote-c
 MS VS Code перезапустится и начнется сборка контейнера.  
 Дождаться окончания процесса.  
 Запустить терминал MS VS Code, в терминале должно быть красивое приглашение командной строки.  
-Возможно увидеть версию Pythona и Django:  
+Возможно увидеть версию Python и Django:  
 
 ```sh
 python --version
