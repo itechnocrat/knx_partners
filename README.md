@@ -63,7 +63,6 @@ python -c "import django; print(django.get_version())"
 [Django documentation](https://docs.djangoproject.com/en/3.1/)  
 [MDN Web Docs, moz://a: Веб-фреймворк Django (Python)](https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django)  
 
-
 ### Основано на
 
 [VS Code Remote / GitHub Codespaces Container Definitions](https://github.com/microsoft/vscode-dev-containers)  
