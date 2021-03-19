@@ -51,7 +51,8 @@ MS VS Code перезапустится и начнется сборка кон�
 
 ```sh
 python --version
-python -c "import django; print(django.get_version())"
+# python -c "import django; print(django.get_version())"
+python -m django --version
 ```
 
 На этом ознакомление со окружением разработки и Django можно считать законченной.  
