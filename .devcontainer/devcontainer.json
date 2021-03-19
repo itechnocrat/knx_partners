@@ -1,4 +1,4 @@
-// Update the VARIANT arg in docker-compose.yml to pick a Python version: 3, 3.8, 3.7, 3.6 
+// Update the VARIANT arg in docker-compose.yml to pick a Python version: 3, 3.8, 3.7, 3.6
 {
     "name": "knx.partners",
     "dockerComposeFile": "docker-compose.yml",
@@ -32,7 +32,29 @@
         "python.linting.pydocstylePath": "/usr/local/py-utils/bin/pydocstyle",
         "python.linting.pylintPath": "/usr/local/py-utils/bin/pylint",
         "python.testing.pytestPath": "/usr/local/py-utils/bin/pytest",
-        "python.languageServer": "Pylance"
+        "python.languageServer": "Pylance",
+        "python.linting.pylintArgs": [
+            "--load-plugins=pylint_django",
+            "--load-plugins=pylint-plugin-utils",
+            "--load-plugins=pylint_django.checkers.migrations",
+            "--disable=C0114, C0115, C0116, W0222",
+            "--disable=imported-auth-user",
+            "--disable=invalid-name",
+            "--disable=line-too-long",
+            "--disable=django-not-configured",
+            "--django-settings-module=capsule.settings",
+        ],
+        "[python]": {
+            "editor.formatOnSave": true
+        },
+        "[json]": {
+            "editor.defaultFormatter": "vscode.json-language-features",
+            "editor.formatOnSave": true
+        },
+        "[jsonc]": {
+            "editor.defaultFormatter": "vscode.json-language-features",
+            "editor.formatOnSave": true
+        }
     },
     // Add the IDs of extensions you want installed when the container is created.
     "extensions": [
