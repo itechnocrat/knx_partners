@@ -1,77 +1,119 @@
 # KNX.Partners
 
-## Описание проекта
+## Разработка
 
-пока отсутствует
+### Попробуем что-то создать
 
-### Описание ветки master
+думать будем с помощью этого: https://docs.djangoproject.com/en/3.1/topics/forms/
 
-`master` содержит конфигурацию Docker-контейнера под плагин для MS VS Code - [Remote - Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers).  
-О технологии [здесь](https://code.visualstudio.com/docs/remote/remote-overview)  
-Созданный по этой конфигурации контейнер будет содержать в себе только Python, Django и PostgreSQL-сервер, плюс др. инструменты, с помощью которых можно начать создавать приложение.  
-PostgreSQL-сервер пока не трогаем, он просто есть.  
-  
-### Запуск "Django Tutorial in Visual Studio Code"
+В миниатюре надо сделать простую html-форму, ее отправку, сохранение данных формы, далее посмотрим.
 
-В любую директорию сделать клон этого репозитория:  
+В UML нарисуем модель DB
 
-```sh
-gh repo clone itechnocrat/knx_partners
-```
-
-or  
+1. Use the `django-admin` tool to generate a project folder, the basic file templates, and `manage.py`.  
+2. Use `manage.py` to create one or more applications.  
+Note: A website may consist of one or more sections. For example, main site, blog, wiki, downloads area, etc.  
+3. Register the new applications to include them in the project.  
+4. Hook up the url/path mapper for each application.  
 
 ```sh
-git clone https://github.com/itechnocrat/knx_partners
+knx_partners/         # Website folder
+    manage.py         # Script to run Django tools for this project (created using django-admin)
+    knx_partners/     # Website/project folder (created using django-admin)
+    catalog/          # Application folder (created using manage.py)
 ```
 
-Перейти в каталог:  
+### Creating the project
+
+```sh
+django-admin startproject knx_partners
+```
+
+=>  
+
+```sh
+knx_partners/         # Website folder
+    catalog/          # Application folder (created using manage.py)
+    knx_partners/     # Website/project folder (created using django-admin)
+        __init__.py
+        settings.py
+        urls.py
+        wsgi.py
+        asgi.py
+    manage.py         # Script to run Django tools for this project (created using django-admin)
+```
+
+### Creating the catalog application
 
 ```sh
 cd knx_partners
+python manage.py startapp prob
 ```
 
-запустить MS VS Code:  
+### Registering the catalog application
+
+Приложение должно быть зарегистрировано для того, чтобы оно было учтено при запуске любых инструментов, например, добавление моделей в БД.  
+
+Приложения регистрируются в списке `INSTALLED_APPS` файла `knx_partners/knx_partners/settings.py`  
+
+### Specifying the database
+
+`DATABASES` файл `knx_partners/knx_partners/settings.py`  
+
+### Other project settings
+
+`TIME_ZONE = 'Europe/Moscow'` файл `knx_partners/knx_partners/settings.py`  
+
+### Hooking up the URL mapper
+
+```py
+from django.contrib import admin
+from django.urls import path, include
+from django.views.generic import RedirectView
+from django.conf import settings
+from django.conf.urls.static import static
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+]
+
+urlpatterns += [
+    path('catalog/', include('catalog.urls')),
+]
+
+urlpatterns += [
+    path('', RedirectView.as_view(url='catalog/', permanent=True)),
+]
+
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+```
 
 ```sh
-code .
+cd ../catalog
+touch ./urls.py
 ```
 
-В MS VS Code установить плагин [Remote - Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers):  
-Launch VS Code Quick Open `Ctrl+P`, paste `ext install ms-vscode-remote.remote-containers` command, and press enter.  
+```py
+from django.urls import path
+from . import views
 
-Как только плагин установится, MS VS Code, в правом нижнем углу, выбросит сообщение с предложением перезапустить текущий каталог в контейнере.  
-Согласиться.  
-Если не выбросит, то "встряхнуть" - просто перезапустить MS VS Code.  
-Есть и другие способы запустить сборку контейнера - <https://code.visualstudio.com/docs/remote/containers-tutorial>  
-MS VS Code перезапустится и начнется сборка контейнера.  
-Дождаться окончания процесса.  
-Запустить терминал MS VS Code, в терминале должно быть красивое приглашение командной строки.  
-Возможно увидеть версию Python и Django:  
+urlpatterns = [
+
+]
+```
+
+### Testing the website framework
+
+```py
+cd ..
+python manage.py makemigrations
+python manage.py migrate
+```
+
+Эти команды необходимо повторять каждый раз, когда изменяются модели.  
+
+### Running the website
 
 ```sh
-python --version
-# python -c "import django; print(django.get_version())"
-python -m django --version
+python manage.py runserver
 ```
-
-На этом ознакомление со окружением разработки и Django можно считать законченной.  
-Следует закрыть терминал MS VS Code, отсоединиться от контейнера.  
-
-### Начало разработки с Django
-
-Переключиться на какую-то ветку и начать:
-[Django documentation](https://docs.djangoproject.com/en/3.1/)  
-[MDN Web Docs, moz://a: Веб-фреймворк Django (Python)](https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django)  
-
-### Основано на
-
-[VS Code Remote / GitHub Codespaces Container Definitions](https://github.com/microsoft/vscode-dev-containers)  
-Использована готовая конфигурация -  
-`vscode-dev-containers/containers/python-3-postgres`  
-из которой взят только `.devcontainer` и в нем подредактированы файлы конфигурации.  
-
-### .devcontainer
-
-В файле `.devcontainer/devcontainer.json` прописаны дополнительные плагины, которые будут доступны MS VS Code после подключения к контейнеру.  
-Это позволяет один раз настроить среду разработки и потом много раз пользоваться, а так же, обмениваться ей с другими разработчиками.  
