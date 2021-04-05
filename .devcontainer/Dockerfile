@@ -24,12 +24,6 @@ RUN if [ "$USER_GID" != "1000" ] || [ "$USER_UID" != "1000" ]; then groupmod --g
 # ARG NODE_VERSION="lts/*"
 # RUN if [ "${INSTALL_NODE}" = "true" ]; then su vscode -c "umask 0002 && . /usr/local/share/nvm/nvm.sh && nvm install ${NODE_VERSION} 2>&1"; fi
 
-# [Optional] If your requirements rarely change, uncomment this section to add them to the image.
-COPY requirements.txt /tmp/pip-tmp/
-RUN python -m pip install --upgrade pip
-RUN pip --disable-pip-version-check --no-cache-dir install -r /tmp/pip-tmp/requirements.txt && rm -rf /tmp/pip-tmp
-# RUN pip install pylint-django
-
 # [Optional] Uncomment this section to install additional OS packages.
 RUN apt-get update
 RUN apt-get -y upgrade
@@ -38,3 +32,8 @@ RUN apt-get -y install --no-install-recommends graphviz
 # RUN apt-get -y install --install-suggests git
 # RUN apt-get -y install --install-suggests zsh
 # RUN sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+
+# [Optional] If your requirements rarely change, uncomment this section to add them to the image.
+COPY requirements.txt /tmp/pip-tmp/
+RUN python -m pip install --upgrade pip
+RUN pip --disable-pip-version-check --no-cache-dir install -r /tmp/pip-tmp/requirements.txt && rm -rf /tmp/pip-tmp

@@ -1,6 +1,6 @@
 // Update the VARIANT arg in docker-compose.yml to pick a Python version: 3, 3.8, 3.7, 3.6
 {
-    "name": "knx.partners",
+    "name": "knx_partners",
     "dockerComposeFile": "docker-compose.yml",
     "service": "app",
     "workspaceFolder": "/workspace",
