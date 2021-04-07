@@ -20,3 +20,7 @@ def get_name(request):
         form = NameForm()
 
     return render(request, 'prob/name.html', {'form': form})
+
+
+def index(request):
+    return render(request, 'prob/index.html')

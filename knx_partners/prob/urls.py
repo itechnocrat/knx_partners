@@ -1,7 +1,8 @@
 from django.urls import path
-from .views import get_name
+from . import views
 
 urlpatterns = [
-    path('handler-form/', get_name),
-    path('', get_name),
+    path('handler-form/', views.get_name),
+    # path('', get_name),
+    path('', views.index, name='index'),
 ]

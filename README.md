@@ -2,13 +2,13 @@
 
 ## Разработка
 
-### Попробуем что-то создать
-
 думать будем с помощью этого: https://docs.djangoproject.com/en/3.1/topics/forms/
 
 В миниатюре надо сделать простую html-форму, ее отправку, сохранение данных формы, далее посмотрим.
 
-В UML нарисуем модель DB
+Модель DB см. в proto.uxf
+
+## Part 2: Creating a skeleton website
 
 1. Use the `django-admin` tool to generate a project folder, the basic file templates, and `manage.py`.  
 2. Use `manage.py` to create one or more applications.  
@@ -33,7 +33,7 @@ django-admin startproject knx_partners
 
 ```sh
 knx_partners/         # Website folder
-    catalog/          # Application folder (created using manage.py)
+    prob/             # Application folder (created using manage.py)
     knx_partners/     # Website/project folder (created using django-admin)
         __init__.py
         settings.py
@@ -56,6 +56,12 @@ python manage.py startapp prob
 
 Приложения регистрируются в списке `INSTALLED_APPS` файла `knx_partners/knx_partners/settings.py`  
 
+```py
+INSTALLED_APPS += [
+    'catalog.apps.CatalogConfig', #This object was created for us in /catalog/apps.py
+]
+```
+
 ### Specifying the database
 
 `DATABASES` файл `knx_partners/knx_partners/settings.py`  
@@ -66,7 +72,11 @@ python manage.py startapp prob
 
 ### Hooking up the URL mapper
 
+[URL dispatcher](https://docs.djangoproject.com/en/3.1/topics/http/urls/)  
+
 ```py
+# knx_partners/urls.py
+
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import RedirectView
@@ -78,22 +88,24 @@ urlpatterns = [
 ]
 
 urlpatterns += [
-    path('catalog/', include('catalog.urls')),
+    path('prob/', include('prob.urls')),
 ]
 
 urlpatterns += [
-    path('', RedirectView.as_view(url='catalog/', permanent=True)),
+    path('', RedirectView.as_view(url='prob/', permanent=True)),
 ]
 
+# обслуживание статических файлов во время разработки
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 ```
 
 ```sh
-cd ../catalog
-touch ./urls.py
+touch prob/urls.py
 ```
 
 ```py
+# prob/urls.py
+
 from django.urls import path
 from . import views
 
@@ -105,7 +117,7 @@ urlpatterns = [
 ### Testing the website framework
 
 ```py
-cd ..
+cd knx_partners
 python manage.py makemigrations
 python manage.py migrate
 ```
@@ -115,5 +127,9 @@ python manage.py migrate
 ### Running the website
 
 ```sh
+python manage.py createsuperuser
+# admin
+# admin@poka.net
+# admin
 python manage.py runserver
 ```
