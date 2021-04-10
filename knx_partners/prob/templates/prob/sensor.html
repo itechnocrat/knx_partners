@@ -1,0 +1,23 @@
+{% extends "layout/basic.html" %}
+
+{% block title %}<title>KNX.Partners</title>{% endblock %}
+{% block header %}
+<header>
+    <h1>Sensor/Interface</h1>
+</header>
+{% endblock %}
+{% block nav %}
+<nav>
+    <a href="http://localhost:8000">Home </a>
+    <a href="http://localhost:8000/input/1">Ввод функций </a>
+    <a href="http://localhost:8000/output/2">Выхлоп</a>
+</nav>
+{% endblock %}
+{% block content %}
+<section>
+    Вы передали {{ id }}
+</section>
+{% endblock %}
+{% block footer %}
+<footer></footer>
+{% endblock %}
