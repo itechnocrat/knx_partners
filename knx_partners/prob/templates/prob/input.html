@@ -1,38 +1,98 @@
 {% extends "layout/basic.html" %}
 
-{% block title %}<title>KNX.Partners</title>{% endblock %}
-{% block header %}
-<header>
-    <h1>Ввод функций</h1>
+{% block title %}KNX.Partners{% endblock %}
+{% block header %}{% endblock %}
+{% block topbar %}
+<header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
+    <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
+        <!-- <svg class="bi me-2" width="40" height="32">
+                <use xlink:href="#bootstrap" />
+            </svg> -->
+        <span class="fs-4">Ввод функций</span>
+    </a>
+
+    <ul class="nav nav-pills">
+        <!-- <li class="nav-item"><a href="http://localhost:8000" class="nav-link active">Home</a></li> -->
+        <li class="nav-item"><a href="http://localhost:8000" class="nav-link">Home</a></li>
+        <li class="nav-item"><a href="http://localhost:8000/input/1" class="nav-link">Ввод функций</a></li>
+        <li class="nav-item"><a href="http://localhost:8000/output/2" class="nav-link">Выхлоп</a></li>
+        <!-- <li class="nav-item"><a href="#" class="nav-link">FAQs</a></li>
+            <li class="nav-item"><a href="#" class="nav-link">About</a></li> -->
+    </ul>
 </header>
 {% endblock %}
-{% block nav %}
-<nav>
-    <a href="http://localhost:8000">Home </a>
-    <a href="http://localhost:8000/input/1">Ввод функций </a>
-    <a href="http://localhost:8000/output/2">Выхлоп</a>
-    <p>
-        <a href="http://localhost:8000/device/3">Device</a>
-    </p>
-    <p>
-        <a href="http://localhost:8000/sensor/4">Sensor/Interface</a>
-    </p>
-    <p>
-        <a href="http://localhost:8000/devicewa/5">Device with automation</a>
-    </p>
-    <p>
-        <a href="http://localhost:8000/socket/6">Socket</a>
-    </p>
-    <p>
-        <a href="http://localhost:8000/light/7">Light</a>
-    </p>
-</nav>
+{% block sidebar %}
+<div class="d-flex flex-column p-3 bg-light" style="width: 280px;">
+    <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
+        <!-- <svg class="bi me-2" width="40" height="32">
+            <use xlink:href="#bootstrap" />
+        </svg> -->
+        <span class="fs-4">Навигация</span>
+    </a>
+    <hr>
+    <ul class="nav nav-pills flex-column mb-auto">
+        <li class="nav-item">
+            <!-- <a href="#" class="nav-link active"> -->
+            <a href="http://localhost:8000/device/3" class="nav-link link-dark">
+                <!-- <svg class="bi me-2" width="16" height="16">
+                    <use xlink:href="#home" />
+                </svg> -->
+                Device
+            </a>
+        </li>
+        <li>
+            <a href="http://localhost:8000/sensor/4" class="nav-link link-dark">
+                <!-- <svg class="bi me-2" width="16" height="16">
+                    <use xlink:href="#speedometer2" />
+                </svg> -->
+                Sensor/Interface
+            </a>
+        </li>
+        <li>
+            <a href="http://localhost:8000/devicewa/5" class="nav-link link-dark">
+                <!-- <svg class="bi me-2" width="16" height="16">
+                    <use xlink:href="#table" />
+                </svg> -->
+                Device with automation
+            </a>
+        </li>
+        <li>
+            <a href="http://localhost:8000/socket/6" class="nav-link link-dark">
+                <!-- <svg class="bi me-2" width="16" height="16">
+                    <use xlink:href="#grid" />
+                </svg> -->
+                Socket
+            </a>
+        </li>
+        <li>
+            <a href="http://localhost:8000/light/7" class="nav-link link-dark">
+                <!-- <svg class="bi me-2" width="16" height="16">
+                    <use xlink:href="#people-circle" />
+                </svg> -->
+                Light
+            </a>
+        </li>
+    </ul>
+    <hr>
+    <div class="dropdown">
+        <a href="#" class="d-flex align-items-center link-dark text-decoration-none dropdown-toggle" id="dropdownUser2"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            <img src="https://github.com/mdo.png" alt="mdo" width="32" height="32" class="rounded-circle me-2">
+            <strong>mdo</strong>
+        </a>
+        <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdownUser2">
+            <li><a class="dropdown-item" href="#">New project...</a></li>
+            <li><a class="dropdown-item" href="#">Settings</a></li>
+            <li><a class="dropdown-item" href="#">Profile</a></li>
+            <li>
+                <hr class="dropdown-divider">
+            </li>
+            <li><a class="dropdown-item" href="#">Sign out</a></li>
+        </ul>
+    </div>
+</div>
 {% endblock %}
-{% block content %}
-<section>
-    Вы передали {{ id }}
-</section>
-{% endblock %}
+{% block content %}Вы передали {{ id }}{% endblock %}
 {% block footer %}
 <footer></footer>
 {% endblock %}
