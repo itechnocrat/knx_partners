@@ -6,5 +6,3 @@ gunicorn
 psycopg2-binary
 wheel
 whitenoise
-django-bootstrap5
-django-bootstrap-v5
