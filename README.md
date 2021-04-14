@@ -12,6 +12,8 @@
 
 [django-bootstrap5](https://django-bootstrap5.readthedocs.io/en/latest/index.html)
 
+[django-bootstrap5](https://pypi.org/project/django-bootstrap5/)
+
 Модель данных см. в `proto.uxf`, для просмотра необходим плагин для VS Code - [UMLet](https://marketplace.visualstudio.com/items?itemName=TheUMLetTeam.umlet).  
 
 ## Part 1: Start
