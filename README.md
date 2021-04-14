@@ -2,12 +2,21 @@
 
 ## Разработка
 
-думать будем с помощью этого: https://docs.djangoproject.com/en/3.1/topics/forms/
+Делать будем с помощью:
 
-В миниатюре надо сделать простую html-форму, ее отправку, сохранение данных формы, далее посмотрим.
+[Django](https://www.djangoproject.com/)
 
-Модель DB см. в proto.uxf
+[Django documentation](https://docs.djangoproject.com/en/3.2/)
 
+[Bootstrap](https://getbootstrap.com/)
+
+[django-bootstrap5](https://django-bootstrap5.readthedocs.io/en/latest/index.html)
+
+Модель данных см. в `proto.uxf`, для просмотра необходим плагин для VS Code - [UMLet](https://marketplace.visualstudio.com/items?itemName=TheUMLetTeam.umlet).  
+
+## Part 1: Start
+
+Пропускаем из-за большого кол-ва воды.
 ## Part 2: Creating a skeleton website
 
 1. Use the `django-admin` tool to generate a project folder, the basic file templates, and `manage.py`.  
@@ -59,6 +68,7 @@ python manage.py startapp prob
 ```py
 INSTALLED_APPS += [
     'catalog.apps.CatalogConfig', #This object was created for us in /catalog/apps.py
+    'django_bootstrap5',
 ]
 ```
 
