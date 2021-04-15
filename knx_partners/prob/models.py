@@ -22,7 +22,7 @@ from django.db.models.fields import CharField
 # class Object_Of_Lighting(models.Model):
 #     number_of_zone = models.
 
-class Device(models.Model):
+class Devices(models.Model):
 
     class ChoiceVoltage(models.IntegerChoices):
         U380 = 380
@@ -33,8 +33,8 @@ class Device(models.Model):
     class ChoiceControl(models.IntegerChoices):
         No = 0
         Yes = 1
-    id = models.BigAutoField(primary_key=True)
 
+    # id = models.BigAutoField(primary_key=True)
     name = models.CharField(
         max_length=50, help_text='Введите название устройства', verbose_name='Название устройства')
     supply_voltage = models.IntegerField(
@@ -43,3 +43,9 @@ class Device(models.Model):
         help_text='Введите потребляемую мощность', verbose_name='Потребляемая мощность')
     control = models.IntegerField(choices=ChoiceControl.choices,
                                   help_text='Управляемое устройство или нет', verbose_name='Управляемость')
+
+    class Meta:
+        ordering = ["name"]
+
+    def __str__(self):
+        return self.name

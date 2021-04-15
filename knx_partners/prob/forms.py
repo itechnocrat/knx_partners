@@ -2,7 +2,7 @@ from django import forms
 from django.forms import ModelForm
 
 # from .models import ProbChoice, ProbRadioSelect
-from .models import Device
+from .models import Devices
 
 
 # class NameForm(forms.Form):
@@ -17,5 +17,5 @@ from .models import Device
 
 class DeviceForm(ModelForm):
     class Meta:
-        model = Device
+        model = Devices
         fields = ('name', 'supply_voltage', 'power_consumption', 'control')

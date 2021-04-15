@@ -1,0 +1,14 @@
+{% extends "layout/basic.html" %}
+
+{% block content %}
+<h2>Devices</h2>
+<span>Название </span><span>Напряжение </span><span>Мощность </span><span>Управляемость </span>
+{% for devices in object_list %}
+<p>
+    <span>{{ devices.name }}</span>
+    <span>{{ devices.supply_voltage }}</span>
+    <span>{{ devices.power_consumption }}</span>
+    <span>{{ devices.control }}</span>
+</p>
+{% endfor %}
+{% endblock %}

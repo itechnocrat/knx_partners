@@ -18,6 +18,8 @@
 
 [django-bootstrap-v5](https://pypi.org/project/django-bootstrap-v5/)
 
+Со встраиванием BS какой-то бардак, по этому подключим дедовским методом в `basic.html`
+
 Модель данных см. в `proto.uxf`, для просмотра необходим плагин для VS Code - [UMLet](https://marketplace.visualstudio.com/items?itemName=TheUMLetTeam.umlet).  
 
 ## Part 1: Start
